@@ -1,6 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 02-fill-users-table-with-default-users
+      context: dev
       author: kastashenkova
       changes:
         - insert:
