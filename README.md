@@ -1,11 +1,16 @@
 # Wine Service Backend
 
 ## Stack
-Language: Java,
+Language: Java
+
 Framework: Spring Boot
+
 Building tool: Maven
+
 Database: PostgreSQL
+
 Migrations: Liquibase
+
 Security: JWT
 
 ## Postman Collection
