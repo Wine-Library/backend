@@ -1,0 +1,57 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02-fill-users-table-with-default-users
+      context: dev
+      author: kastashenkova
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: v.velykyi@gmail.com
+              - column:
+                  name: password
+                  value: $2a$10$G2OoeNY26fSUG0QFW5TTMupfHWEB5akpHsXDlVKsTOXIlb1jgD1mK # admin123
+              - column:
+                  name: age
+                  valueNumeric: 20
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: i.mykolaichuk@gmail.com
+              - column:
+                  name: password
+                  value: $2a$10$SMqNrwJAr1g8RKfzfGdtreDPjbfIvT807xSA0VfBBFLkryiGI35sG # user1234
+              - column:
+                  name: age
+                  valueNumeric: 31
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: o.teliha@icloud.com
+              - column:
+                  name: password
+                  value: $2a$10$FyiTO8oSW9SawlT3NUTYIuN6PUFoVfN0nKFwPpAMpTkcOZazWaNOq # password1
+              - column:
+                  name: age
+                  valueNumeric: 16
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: v.stus@gmail.com
+              - column:
+                  name: password
+                  value: $2a$10$4T43FxN0KrYjAphXFyi5ZOnb/nlLxTMRY2d7Q00RbfTZYiTNc.ZDi # qwerty123
+              - column:
+                  name: age
+                  valueNumeric: 40
