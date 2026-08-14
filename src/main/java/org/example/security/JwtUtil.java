@@ -3,7 +3,6 @@ package org.example.security;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.List;
 import java.util.function.Function;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -11,15 +10,12 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
     private final SecretKey secretKey;
-
     private final UserDetailsService userDetailsService;
 
     @Value("${jwt.expiration}")
@@ -31,18 +27,24 @@ public class JwtUtil {
     @Value("${jwt.audience}")
     private String audience;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret, UserDetailsService userDetailsService) {
-        secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    public JwtUtil(@Value("${jwt.secret}") String secret,
+            UserDetailsService userDetailsService) {
+        this.secretKey = Keys.hmacShaKeyFor(
+                secret.getBytes(StandardCharsets.UTF_8)
+        );
         this.userDetailsService = userDetailsService;
     }
 
     public String generateToken(String email) {
+        Date now = new Date();
         return Jwts.builder()
                 .subject(email)
                 .issuer(issuer)
-                .audience().add(audience).and()
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .audience()
+                .add(audience)
+                .and()
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + expiration))
                 .signWith(secretKey)
                 .compact();
     }
@@ -55,9 +57,16 @@ public class JwtUtil {
                     .requireAudience(audience)
                     .build()
                     .parseSignedClaims(token);
-            return !claimsJws.getPayload().getExpiration().before(new Date());
+
+            Date expirationDate = claimsJws
+                    .getPayload()
+                    .getExpiration();
+
+            return expirationDate != null
+                    && expirationDate.after(new Date());
+
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtException("Expired or invalid JWT token: " + token, e);
+            return false;
         }
     }
 
@@ -65,8 +74,9 @@ public class JwtUtil {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = Jwts.parser()
+    private <T> T getClaimFromToken(String token,
+            Function<Claims, T> claimsResolver) {
+        Claims claims = Jwts.parser()
                 .verifyWith(secretKey)
                 .requireIssuer(issuer)
                 .requireAudience(audience)
