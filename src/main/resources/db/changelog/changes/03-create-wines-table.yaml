@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02-create-wines-table
+      author: kastashenkova
+      changes:
+        - createTable:
+            tableName: wines
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
