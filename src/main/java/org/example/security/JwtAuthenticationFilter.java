@@ -1,5 +1,7 @@
 package org.example.security;
 
+import java.io.IOException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,8 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -25,26 +25,55 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
-        String token = getToken(request);
-        if (token != null && jwtUtil.isValidToken(token)) {
-            String email = jwtUtil.getUsername(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        String token = getToken(request);
+
+        if (token != null) {
+            try {
+                if (jwtUtil.isValidToken(token)) {
+                    String email = jwtUtil.getUsername(token);
+
+                    UserDetails userDetails =
+                            userDetailsService.loadUserByUsername(email);
+
+                    Authentication authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
+
+                    SecurityContextHolder
+                            .getContext()
+                            .setAuthentication(authentication);
+                }
+            } catch (JwtException | IllegalArgumentException e) {
+                SecurityContextHolder.clearContext();
+            }
+        }
+
         filterChain.doFilter(request, response);
     }
 
     private String getToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_PREFIX)) {
+
+        if (StringUtils.hasText(bearerToken)
+                && bearerToken.startsWith(TOKEN_PREFIX)) {
+
             return bearerToken.substring(TOKEN_PREFIX.length());
         }
+
         return null;
     }
 }
