@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changes/01-create-users-table.yaml
   - include:
       file: db/changelog/changes/02-fill-users-table-with-default-users.yaml
+  - include:
+      file: db/changelog/changes/03-replace-age-with-older-than-eighteen.yaml

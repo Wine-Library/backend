@@ -1,13 +1,13 @@
 package org.example.dto.user.registration;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.example.dto.user.registration.annotation.FieldMatch;
-import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
@@ -17,14 +17,20 @@ import org.hibernate.validator.constraints.Length;
 @Accessors(chain = true)
 public class UserRequestDto {
     @NotBlank
-    @Email(message = "{validation.email.invalid}")
+    @Email(message = "Email format is not correct")
     private String email;
-    @NotNull
-    private int age;
+    @AssertTrue(message = "User must be older than eighteen")
+    private Boolean olderThanEighteen;
     @NotBlank
-    @Length(min = 8, max = 35, message = "{validation.password.size}")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[a-z]).{8,35}$",
+            message = "Password  must contain at least 8 characters, at least one uppercase and one lowercase letter"
+    )
     private String password;
     @NotBlank
-    @Length(min = 8, max = 35, message = "{validation.password.size}")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[a-z]).{8,35}$",
+            message = "Password  must contain at least 8 characters, at least one uppercase and one lowercase letter"
+    )
     private String repeatPassword;
 }
