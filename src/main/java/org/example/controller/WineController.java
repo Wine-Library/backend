@@ -59,10 +59,10 @@ public class WineController {
             description = "Import image for the wine by its id"
     )
     @ResponseStatus(HttpStatus.CREATED)
-    public WineResponseDto importImage(@RequestParam Long wineId,
+    public WineResponseDto importImage(@PathVariable Long id,
                                        @RequestParam("imageFile") MultipartFile imageFile
     ) {
-        return wineService.importImage(wineId, imageFile);
+        return wineService.importImage(id, imageFile);
     }
 
     @PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
