@@ -24,12 +24,14 @@ public class UserRequestDto {
     @NotBlank
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*[a-z]).{8,35}$",
+            message = "Password must contain at least 8 characters, at least one uppercase and one lowercase letter"
             message = "Password  must contain at least 8 characters, at least one uppercase and one lowercase letter"
     )
     private String password;
     @NotBlank
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*[a-z]).{8,35}$",
+            message = "Password must contain at least 8 characters, at least one uppercase and one lowercase letter"
             message = "Password  must contain at least 8 characters, at least one uppercase and one lowercase letter"
     )
     private String repeatPassword;
