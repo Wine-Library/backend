@@ -1,5 +1,6 @@
 package org.example.dto.wine;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -14,6 +15,6 @@ public class WineResponseDto {
     private String countryOfOrigin;
     private String wineType;
     private Double popularityRating;
-    private String occasion;
+    private List<String> occasions;
     private String productImage;
 }
