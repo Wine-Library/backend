@@ -46,5 +46,7 @@ public class Wine {
     @Column(nullable = false)
     private String productImage;
     @Column(nullable = false)
+    private Integer year;
+    @Column(nullable = false)
     private boolean isDeleted = false;
 }

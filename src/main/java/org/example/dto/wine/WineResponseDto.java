@@ -18,4 +18,5 @@ public class WineResponseDto {
     private BigDecimal popularityRating;
     private List<String> occasions;
     private String productImage;
+    private Integer year;
 }
