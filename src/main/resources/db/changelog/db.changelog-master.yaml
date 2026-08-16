@@ -16,10 +16,14 @@ databaseChangeLog:
   - include:
       file: db/changelog/changes/08-update-occasion-column-to-occasions.yaml
   - include:
-      file: db/changelog/changes/09-add-name-surname-phone-columns-for-users.yaml
+      file: db/changelog/changes/09-add-name-surname-phone-address-columns-for-users.yaml
   - include:
-      file: db/changelog/changes/10-fill-name-surname-phone-columns-for-default-users.yaml
+      file: db/changelog/changes/10-fill-name-surname-phone-address-columns-for-default-users.yaml
   - include:
       file: db/changelog/changes/11-create-favorites-table.yaml
   - include:
       file: db/changelog/changes/12-create-shopping-carts-table.yaml
+  - include:
+      file: db/changelog/changes/13-create-cart-items-table.yaml
+  - include:
+      file: db/changelog/changes/14-create-shopping-carts-for-default-users.yaml

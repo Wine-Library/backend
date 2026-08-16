@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 10-fill-name-surname-phone-columns-for-default-users
+      id: 10-fill-name-surname-phone-address-columns-for-default-users
       author: kastashenkova
       changes:
         - update:
@@ -15,6 +15,9 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   value: "+380988888888"
+              - column:
+                  name: shipping_address
+                  value: "Crimea"
             where: "email = 'v.velykyi@gmail.com'"
 
         - update:
@@ -29,6 +32,9 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   value: "+380980137037"
+              - column:
+                  name: shipping_address
+                  value: "Kyiv"
             where: "email = 'astashenkova.katya@gmail.com'"
 
         - update:
@@ -43,6 +49,9 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   value: "+380987777777"
+              - column:
+                  name: shipping_address
+                  value: "Chernihiv"
             where: "email = 'v.stus@gmail.com'"
 
         - update:
@@ -57,6 +66,9 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   value: "+380983333333"
+              - column:
+                  name: shipping_address
+                  value: "Lviv"
             where: "email = 'o.teliha@icloud.com'"
 
         - update:
@@ -71,6 +83,9 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   value: "+380981111111"
+              - column:
+                  name: shipping_address
+                  value: "Kyiv"
             where: "email = 'i.mykolaichuk@gmail.com'"
 
         - addNotNullConstraint:
@@ -87,6 +102,11 @@ databaseChangeLog:
             tableName: users
             columnName: phone_number
             columnDataType: varchar(13)
+
+        - addNotNullConstraint:
+            tableName: users
+            columnName: shipping_address
+            columnDataType: varchar(255)
 
         - addUniqueConstraint:
             tableName: users
