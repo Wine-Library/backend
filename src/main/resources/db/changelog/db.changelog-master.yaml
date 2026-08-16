@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db/changelog/changes/06-add-enabled-column-for-users.yaml
   - include:
       file: db/changelog/changes/07-update-passwords-to-match-pattern.yaml
+  - include:
+      file: db/changelog/changes/08-update-occasion-column-to-occasions.yaml

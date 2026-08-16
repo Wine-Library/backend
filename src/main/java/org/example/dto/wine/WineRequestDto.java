@@ -3,6 +3,7 @@ package org.example.dto.wine;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +25,7 @@ public class WineRequestDto {
     @NotNull
     private Double popularityRating;
     @NotBlank
-    private String occasion;
+    private List<String> occasions;
     @NotNull
     private MultipartFile productImage;
 }

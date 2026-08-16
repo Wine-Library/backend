@@ -73,7 +73,7 @@ public class WineServiceImpl implements WineService {
                 .setCountryOfOrigin(requestDto.getCountryOfOrigin())
                 .setPrice(requestDto.getPrice())
                 .setPopularityRating(requestDto.getPopularityRating())
-                .setOccasion(requestDto.getOccasion());
+                .setOccasions(requestDto.getOccasions());
         wine = wineRepository.save(wine);
         return wineMapper.toDto(wine);
     }
