@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+      id: 09-add-name-surname-phone-columns-for-users
+      author: kastashenkova
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: surname
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: phone_number
+                  type: varchar(13)
+                  constraints:
+                    nullable: true

@@ -11,7 +11,7 @@ import org.example.dto.user.registration.annotation.FieldMatch;
 @Setter
 @FieldMatch(first = "newPassword",
         second = "repeatPassword",
-        message = "Password and repeated password do not match")
+        message = "{validation.password-repeat-password.not-match}")
 @Accessors(chain = true)
 public class ResetPasswordRequestDto {
 
@@ -21,14 +21,14 @@ public class ResetPasswordRequestDto {
     @NotBlank
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*[a-z]).{8,35}$",
-            message = "Password must contain at least 8 characters, at least one uppercase and one lowercase letter"
+            message = "{validation.password.format}"
     )
     private String newPassword;
 
     @NotBlank
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*[a-z]).{8,35}$",
-            message = "Password must contain at least 8 characters, at least one uppercase and one lowercase letter"
+            message = "{validation.password.format}"
     )
     private String repeatPassword;
 }

@@ -1,0 +1,94 @@
+databaseChangeLog:
+  - changeSet:
+      id: 10-fill-name-surname-phone-columns-for-default-users
+      author: kastashenkova
+      changes:
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Volodymyr
+              - column:
+                  name: surname
+                  value: Velykyi
+              - column:
+                  name: phone_number
+                  value: "+380988888888"
+            where: "email = 'v.velykyi@gmail.com'"
+
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Kateryna
+              - column:
+                  name: surname
+                  value: Astashenkova
+              - column:
+                  name: phone_number
+                  value: "+380980137037"
+            where: "email = 'astashenkova.katya@gmail.com'"
+
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Vasyl
+              - column:
+                  name: surname
+                  value: Stus
+              - column:
+                  name: phone_number
+                  value: "+380987777777"
+            where: "email = 'v.stus@gmail.com'"
+
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Olena
+              - column:
+                  name: surname
+                  value: Teliha
+              - column:
+                  name: phone_number
+                  value: "+380983333333"
+            where: "email = 'o.teliha@icloud.com'"
+
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: name
+                  value: Ivan
+              - column:
+                  name: surname
+                  value: Mykolaichuk
+              - column:
+                  name: phone_number
+                  value: "+380981111111"
+            where: "email = 'i.mykolaichuk@gmail.com'"
+
+        - addNotNullConstraint:
+            tableName: users
+            columnName: name
+            columnDataType: varchar(50)
+
+        - addNotNullConstraint:
+            tableName: users
+            columnName: surname
+            columnDataType: varchar(255)
+
+        - addNotNullConstraint:
+            tableName: users
+            columnName: phone_number
+            columnDataType: varchar(13)
+
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: phone_number
+            constraintName: uk_users_phone_number

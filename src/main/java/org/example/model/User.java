@@ -34,6 +34,12 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Boolean olderThanEighteen;
     @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
+    private String surname;
+    @Column(nullable = false)
+    private String phoneNumber;
+    @Column(nullable = false)
     private boolean isDeleted = false;
 
     @Column(nullable = false)
