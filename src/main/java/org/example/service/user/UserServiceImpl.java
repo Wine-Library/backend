@@ -2,18 +2,25 @@ package org.example.service.user;
 
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.user.registration.UserRequestDto;
 import org.example.dto.user.registration.UserResponseDto;
+import org.example.dto.wine.WineResponseDto;
 import org.example.exception.RegistrationException;
 import org.example.mapper.UserMapper;
+import org.example.mapper.WineMapper;
 import org.example.model.User;
 import org.example.model.VerificationToken;
+import org.example.model.Wine;
 import org.example.repository.UserRepository;
 import org.example.repository.VerificationTokenRepository;
+import org.example.repository.WineRepository;
 import org.example.service.user.email.EmailService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final WineRepository wineRepository;
     private final UserMapper userMapper;
+    private final WineMapper wineMapper;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository tokenRepository;
     private final EmailService emailService;
@@ -60,6 +69,22 @@ public class UserServiceImpl implements UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+        return userMapper.toDto(user);
+    }
+
+    @Override
+    @Transactional
+    public UserResponseDto updateMyInfo(UserRequestDto request) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+        user.setEmail(request.getEmail())
+                .setName(request.getName())
+                .setSurname(request.getSurname())
+                .setPhoneNumber(request.getPhoneNumber())
+                .setShippingAddress(request.getShippingAddress())
+                .setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
         return userMapper.toDto(user);
     }
 
@@ -107,6 +132,45 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         tokenRepository.delete(resetToken);
+    }
+
+    @Override
+    @Transactional
+    public void addWineToFavorites(Long wineId) {
+        Wine wine = wineRepository.findById(wineId).orElseThrow(
+                () -> new EntityNotFoundException("Wine not found: " + wineId));
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+        Set<Wine> favoriteWines = user.getFavoriteWines();
+        favoriteWines.add(wine);
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void removeWineFromFavorites(Long wineId) {
+        Wine wine = wineRepository.findById(wineId).orElseThrow(
+                () -> new EntityNotFoundException("Wine not found: " + wineId));
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+        Set<Wine> favoriteWines = user.getFavoriteWines();
+        favoriteWines.remove(wine);
+        userRepository.save(user);
+    }
+
+    @Override
+    public Page<WineResponseDto> getFavorites(Pageable pageable) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+
+        return userRepository
+                .findFavoriteWines(user.getId(), pageable)
+                .map(wineMapper::toDto);
     }
 
     private void createVerificationToken(User user, String token,
