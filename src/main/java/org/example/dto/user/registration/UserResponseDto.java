@@ -1,6 +1,5 @@
 package org.example.dto.user.registration;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -15,5 +14,4 @@ public class UserResponseDto {
     private String surname;
     private String phoneNumber;
     private String shippingAddress;
-    private List<Long> favoriteWineIds;
 }
