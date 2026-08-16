@@ -2,9 +2,9 @@ package org.example.dto.wine;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.Getter;
@@ -28,7 +28,7 @@ public class WineRequestDto {
     @NotNull
     @Min(value = 0, message = "{validation.popularity-rating.invalid}")
     private BigDecimal popularityRating;
-    @NotBlank
+    @NotEmpty
     private List<String> occasions;
     @NotNull
     private MultipartFile productImage;
