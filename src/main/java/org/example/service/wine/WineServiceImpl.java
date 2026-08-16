@@ -8,8 +8,11 @@ import jakarta.persistence.EntityNotFoundException;
 import org.example.mapper.WineMapper;
 import org.example.model.Wine;
 import org.example.repository.WineRepository;
+import org.example.repository.filter.wine.WineSearchParameters;
+import org.example.repository.filter.wine.WineSpecificationBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +22,7 @@ public class WineServiceImpl implements WineService {
     private final WineRepository wineRepository;
     private final WineMapper wineMapper;
     private final ImportFileService importFileService;
+    private final WineSpecificationBuilder wineSpecificationBuilder;
 
     @Override
     public WineResponseDto save(WineRequestDto requestDto) {
@@ -103,5 +107,13 @@ public class WineServiceImpl implements WineService {
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload image", e);
         }
+    }
+
+    @Override
+    public Page<WineResponseDto> search(WineSearchParameters searchParameters, Pageable pageable) {
+        Specification<Wine> wineSpecification = wineSpecificationBuilder
+                .buildSpecification(searchParameters);
+        return wineRepository.findAll(wineSpecification, pageable)
+                .map(wineMapper::toDto);
     }
 }

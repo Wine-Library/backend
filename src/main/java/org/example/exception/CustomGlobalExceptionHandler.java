@@ -56,6 +56,11 @@ public class CustomGlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(SpecificationNotFoundException.class)
+    public ResponseEntity<String> handleSpecificationNotFound(SpecificationNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException ex) {
         return new ResponseEntity<>("File size exceeds the maximum allowed limit (5MB)",
