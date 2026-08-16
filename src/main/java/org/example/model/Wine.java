@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,20 +31,22 @@ public class Wine {
     private Long id;
     @Column(unique = true, nullable = false)
     private String wineName;
-    @Column(nullable = false)
-    private Double price;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
     @Column(nullable = false)
     private String countryOfOrigin;
     @Column(nullable = false)
     private String wineType;
-    @Column(nullable = false)
-    private Double popularityRating;
+    @Column(nullable = false, precision = 3, scale = 2)
+    private BigDecimal popularityRating;
     @NotEmpty
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(columnDefinition = "text[]", nullable = false)
     private List<String> occasions;
     @Column(nullable = false)
     private String productImage;
+    @Column(nullable = false)
+    private Integer year;
     @Column(nullable = false)
     private boolean isDeleted = false;
 }

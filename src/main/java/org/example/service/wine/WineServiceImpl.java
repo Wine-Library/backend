@@ -8,8 +8,12 @@ import jakarta.persistence.EntityNotFoundException;
 import org.example.mapper.WineMapper;
 import org.example.model.Wine;
 import org.example.repository.WineRepository;
+import org.example.repository.filter.wine.WineSearchParameters;
+import org.example.repository.filter.wine.WineSpecificationBuilder;
+import org.example.service.wine.import_image.ImportImageService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,13 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class WineServiceImpl implements WineService {
     private final WineRepository wineRepository;
     private final WineMapper wineMapper;
-    private final ImportFileService importFileService;
+    private final ImportImageService importImageService;
+    private final WineSpecificationBuilder wineSpecificationBuilder;
 
     @Override
     public WineResponseDto save(WineRequestDto requestDto) {
         Wine wine = wineMapper.toEntity(requestDto);
         try {
-            String imageUrl = importFileService.uploadFile(requestDto.getProductImage());
+            String imageUrl = importImageService.uploadFile(requestDto.getProductImage());
             wine.setProductImage(imageUrl);
             wine = wineRepository.save(wine);
 
@@ -51,21 +56,19 @@ public class WineServiceImpl implements WineService {
     }
 
     @Override
-    public WineResponseDto updateWineById(
-            Long id,
-            WineRequestDto requestDto
-    ) {
+    public WineResponseDto updateWineById(Long id, WineRequestDto requestDto) {
         Wine wine = wineRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Cannot update wine by id: " + id
                 ));
 
-        try {
-            String imageUrl = importFileService.uploadFile(requestDto.getProductImage());
-            wine.setProductImage(imageUrl);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to upload image", e);
+        if (requestDto.getProductImage() != null && !requestDto.getProductImage().isEmpty()) {
+            try {
+                String imageUrl = importImageService.uploadFile(requestDto.getProductImage());
+                wine.setProductImage(imageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload image", e);
+            }
         }
 
         wine.setWineName(requestDto.getWineName())
@@ -74,6 +77,7 @@ public class WineServiceImpl implements WineService {
                 .setPrice(requestDto.getPrice())
                 .setPopularityRating(requestDto.getPopularityRating())
                 .setOccasions(requestDto.getOccasions());
+
         wine = wineRepository.save(wine);
         return wineMapper.toDto(wine);
     }
@@ -95,7 +99,7 @@ public class WineServiceImpl implements WineService {
                 "Cannot find wine by id: " + wineId
         ));
         try {
-            String imageUrl = importFileService.uploadFile(file);
+            String imageUrl = importImageService.uploadFile(file);
             wine.setProductImage(imageUrl);
             wine = wineRepository.save(wine);
 
@@ -103,5 +107,13 @@ public class WineServiceImpl implements WineService {
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload image", e);
         }
+    }
+
+    @Override
+    public Page<WineResponseDto> search(WineSearchParameters searchParameters, Pageable pageable) {
+        Specification<Wine> wineSpecification = wineSpecificationBuilder
+                .buildSpecification(searchParameters);
+        return wineRepository.findAll(wineSpecification, pageable)
+                .map(wineMapper::toDto);
     }
 }
