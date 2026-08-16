@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.dto.cart_item.CartItemRequestDto;
 import org.example.dto.cart_item.UpdateCartItemDto;
 import org.example.dto.shopping_cart.ShoppingCartDto;
+import org.example.dto.shopping_cart.ShoppingCartWithCountersDto;
 import org.example.service.shopping_cart.ShoppingCartService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,13 @@ public class ShoppingCartController {
             description = "Retrieve user's shopping cart")
     public ShoppingCartDto getShoppingCart() {
         return shoppingCartService.getCart();
+    }
+
+    @GetMapping("/manage")
+    @Operation(summary = "Get shopping cart with subtotal per item and a total price counter",
+            description = "Retrieve user's shopping cart with subtotal per item and a total price counter")
+    public ShoppingCartWithCountersDto getShoppingCartWithCounters() {
+        return shoppingCartService.getCartWithCounters();
     }
 
     @PostMapping

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 15-change-price-and-popularity-rating-fields-type-in-wines
+      author: kastashenkova
+      changes:
+        - modifyDataType:
+            tableName: wines
+            columnName: price
+            newDataType: NUMERIC(10, 2)
+        - modifyDataType:
+            tableName: wines
+            columnName: popularity_rating
+            newDataType: NUMERIC(3, 2)
