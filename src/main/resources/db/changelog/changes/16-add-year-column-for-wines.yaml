@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 15-add-year-column-for-wines
+      id: 16-add-year-column-for-wines
       author: kastashenkova
       changes:
         - addColumn:
