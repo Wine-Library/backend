@@ -45,4 +45,6 @@ public class UserRequestDto {
             message = "{validation.phone.invalid}"
     )
     private String phoneNumber;
+    @NotBlank
+    private String shippingAddress;
 }

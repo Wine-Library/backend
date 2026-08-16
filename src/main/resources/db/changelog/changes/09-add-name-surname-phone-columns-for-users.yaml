@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 09-add-name-surname-phone-columns-for-users
+      id: 09-add-name-surname-phone-address-columns-for-users
       author: kastashenkova
       changes:
         - addColumn:
@@ -19,5 +19,10 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   type: varchar(13)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: shipping_address
+                  type: varchar(255)
                   constraints:
                     nullable: true
