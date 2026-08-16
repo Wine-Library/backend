@@ -32,4 +32,11 @@ public class MinPriceSpecificationProvider
                         param
                 );
     }
+
+    @Override
+    public Specification<Wine> getSpecification(int param) {
+        throw new UnsupportedOperationException(
+                "MinPriceSpecificationProvider requires a numeric parameter"
+        );
+    }
 }

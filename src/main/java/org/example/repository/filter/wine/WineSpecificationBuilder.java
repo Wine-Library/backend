@@ -16,6 +16,8 @@ public class WineSpecificationBuilder implements SpecificationBuilder<Wine> {
     private static final String MAX_PRICE_KEY = "maxPrice";
     private static final String MIN_POPULARITY_RATING_KEY = "minPopularityRating";
     private static final String MAX_POPULARITY_RATING_KEY = "maxPopularityRating";
+    private static final String MIN_YEAR_KEY = "minYear";
+    private static final String MAX_YEAR_KEY = "maxYear";
 
     private final SpecificationProviderManager<Wine> wineSpecificationProviderManager;
 
@@ -57,6 +59,18 @@ public class WineSpecificationBuilder implements SpecificationBuilder<Wine> {
                     wineSpecificationProviderManager
                             .getSpecificationProvider(MAX_POPULARITY_RATING_KEY)
                             .getSpecification(searchParameters.maxPopularityRating()));
+        }
+        if (searchParameters.minYear() != 0) {
+            specification = specification.and(
+                    wineSpecificationProviderManager
+                            .getSpecificationProvider(MIN_YEAR_KEY)
+                            .getSpecification(searchParameters.minYear()));
+        }
+        if (searchParameters.maxYear() != 0) {
+            specification = specification.and(
+                    wineSpecificationProviderManager
+                            .getSpecificationProvider(MAX_YEAR_KEY)
+                            .getSpecification(searchParameters.maxYear()));
         }
         return specification;
     }

@@ -1,4 +1,4 @@
-package org.example.service.wine;
+package org.example.service.wine.import_image;
 
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
-public class ImportFileServiceImpl implements ImportFileService {
+public class ImportImageServiceImpl implements ImportImageService {
 
     @Value("${upload.dir:/app/uploads}")
     private String uploadDir;
