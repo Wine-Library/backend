@@ -3,6 +3,10 @@ package org.example.service.shopping_cart;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.cart_item.CartItemRequestDto;
+import org.example.dto.cart_item.CartItemWithCounterResponseDto;
+import org.example.dto.cart_item.UpdateCartItemDto;
+import org.example.dto.shopping_cart.ShoppingCartDto;
+import org.example.dto.shopping_cart.ShoppingCartWithCountersDto;
 import org.example.dto.cart_item.UpdateCartItemDto;
 import org.example.dto.shopping_cart.ShoppingCartDto;
 import org.example.mapper.ShoppingCartMapper;
@@ -17,6 +21,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Transactional
@@ -38,6 +46,41 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                         "Cart not found for user " + currentUserId));
 
         return shoppingCartMapper.toDto(cart);
+    }
+
+    @Override
+    public ShoppingCartWithCountersDto getCartWithCounters() {
+        Long currentUserId = getCurrentUserId();
+
+        ShoppingCart cart = shoppingCartRepository
+                .findByUserId(currentUserId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Cart not found for user " + currentUserId));
+        Set<CartItemWithCounterResponseDto> cartItemsWithCounter = new HashSet<>();
+        for (CartItem cartItem : cart.getCartItems()) {
+            CartItemWithCounterResponseDto cartItemWithCounterResponseDto
+                    = new CartItemWithCounterResponseDto()
+                    .setId(cartItem.getId())
+                            .setWineId(cartItem.getWine().getId())
+                                    .setQuantity(cartItem.getQuantity())
+                                            .setTotalPrice(cartItem
+                                                    .getWine()
+                                                    .getPrice()
+                                                    .multiply(BigDecimal.valueOf(
+                                                            cartItem.getQuantity())));
+            cartItemsWithCounter.add(cartItemWithCounterResponseDto);
+        }
+
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (CartItemWithCounterResponseDto item : cartItemsWithCounter) {
+            totalPrice = totalPrice.add(item.getTotalPrice());
+        }
+
+        return new ShoppingCartWithCountersDto()
+                .setId(cart.getId())
+                .setUserId(currentUserId)
+                .setCartItems(cartItemsWithCounter)
+                .setTotalPrice(totalPrice);
     }
 
     @Override

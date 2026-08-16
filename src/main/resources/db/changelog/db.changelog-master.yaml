@@ -27,3 +27,5 @@ databaseChangeLog:
       file: db/changelog/changes/13-create-cart-items-table.yaml
   - include:
       file: db/changelog/changes/14-create-shopping-carts-for-default-users.yaml
+  - include:
+      file: db/changelog/changes/15-change-price-and-popularity-rating-fields-type-in-wines.yaml
