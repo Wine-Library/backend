@@ -17,4 +17,5 @@ public class WineResponseDto {
     private Double popularityRating;
     private List<String> occasions;
     private String productImage;
+    private Integer year;
 }

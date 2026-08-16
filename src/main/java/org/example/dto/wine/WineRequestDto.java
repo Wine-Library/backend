@@ -30,4 +30,6 @@ public class WineRequestDto {
     private List<String> occasions;
     @NotNull
     private MultipartFile productImage;
+    @NotNull
+    private Integer year;
 }
