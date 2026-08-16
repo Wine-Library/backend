@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 17-remove-uniqueness-of-wine-names
+      author: kastashenkova
+      changes:
+        - sql:
+            sql: ALTER TABLE wines DROP CONSTRAINT IF EXISTS wines_wine_name_key;

@@ -5,5 +5,7 @@ public record WineSearchParameters(double minPrice,
                                    String[] wineTypes,
                                    String[] countriesOfOrigin,
                                    double minPopularityRating,
-                                   double maxPopularityRating) {
+                                   double maxPopularityRating,
+                                   int minYear,
+                                   int maxYear) {
 }

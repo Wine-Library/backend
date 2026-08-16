@@ -32,4 +32,11 @@ public class MinPopularityRatingSpecificationProvider
                         param
                 );
     }
+
+    @Override
+    public Specification<Wine> getSpecification(int param) {
+        throw new UnsupportedOperationException(
+                "MinPopularityRatingSpecificationProvider requires a numeric parameter"
+        );
+    }
 }

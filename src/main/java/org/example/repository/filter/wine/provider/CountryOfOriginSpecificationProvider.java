@@ -27,4 +27,11 @@ public class CountryOfOriginSpecificationProvider implements SpecificationProvid
                 "CountryOfOriginSpecificationProvider requires a string parameter"
         );
     }
+
+    @Override
+    public Specification<Wine> getSpecification(int param) {
+        throw new UnsupportedOperationException(
+                "CountryOfOriginSpecificationProvider requires a string parameter"
+        );
+    }
 }
