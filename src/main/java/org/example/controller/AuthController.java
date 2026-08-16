@@ -48,7 +48,7 @@ public class AuthController {
     }
 
     @GetMapping("/confirm-email")
-    @Operation(summary = "Confirm Email",
+    @Operation(summary = "Confirm email",
             description = "Activates user account via email token")
     public void confirmEmail(@RequestParam("token") String token) {
         userService.confirmEmail(token);
@@ -56,7 +56,7 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Forgot Password",
+    @Operation(summary = "Forgot password",
             description = "Initiates password recovery process")
     public void forgotPassword(@RequestBody @Valid ForgotPasswordRequestDto request) {
         userService.processForgotPassword(request.getEmail());
@@ -64,7 +64,7 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Reset Password",
+    @Operation(summary = "Reset password",
             description = "Sets a new password using a recovery token")
     public void resetPassword(@RequestBody @Valid ResetPasswordRequestDto request) {
         userService.resetPassword(request.getToken(), request.getNewPassword());

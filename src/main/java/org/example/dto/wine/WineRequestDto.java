@@ -1,5 +1,6 @@
 package org.example.dto.wine;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -15,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class WineRequestDto {
     @NotBlank
     private String wineName;
-    @Positive
+    @Positive(message = "{validation.price.invalid}")
     @NotNull
     private Double price;
     @NotBlank
@@ -23,6 +24,7 @@ public class WineRequestDto {
     @NotBlank
     private String wineType;
     @NotNull
+    @Min(value = 0, message = "{validation.popularity-rating.invalid}")
     private Double popularityRating;
     @NotBlank
     private List<String> occasions;

@@ -11,6 +11,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ForgotPasswordRequestDto {
     @NotBlank
-    @Email(message = "Email format is not correct")
+    @Email(message = "{validation.email.invalid}")
     private String email;
 }
