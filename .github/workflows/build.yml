@@ -48,7 +48,7 @@ jobs:
         with:
           images: ${{ env.IMAGE }}
           tags: |
-            type=raw,value=development,enable=${{ github.ref_name == 'development' }}
+            type=raw,value=dev,enable=${{ github.ref_name == 'development' }}
             type=raw,value=staging,enable=${{ github.ref_name == 'staging' }}
             type=raw,value=prod,enable=${{ github.ref_name == 'main' }}
             type=raw,value=${{ github.sha }}
