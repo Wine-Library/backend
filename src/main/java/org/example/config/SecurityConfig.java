@@ -29,6 +29,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
             throws Exception {
         return http
@@ -54,6 +55,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();

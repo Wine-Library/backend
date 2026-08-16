@@ -20,6 +20,7 @@ RUN --mount=type=cache,target=/root/.m2 \
     mvn -B package -DskipTests
 
 FROM eclipse-temurin:21-jre AS prod
+LABEL org.opencontainers.image.source=https://github.com/Wine-Library/backend
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"
