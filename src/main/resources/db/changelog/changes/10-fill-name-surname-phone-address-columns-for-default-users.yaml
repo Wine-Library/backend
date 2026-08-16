@@ -88,6 +88,13 @@ databaseChangeLog:
                   value: "Kyiv"
             where: "email = 'i.mykolaichuk@gmail.com'"
 
+        - sql:
+            sql: >
+              UPDATE users SET name = COALESCE(name, '') WHERE name IS NULL;
+              UPDATE users SET surname = COALESCE(surname, '') WHERE surname IS NULL;
+              UPDATE users SET phone_number = COALESCE(phone_number, 'u' || id) WHERE phone_number IS NULL;
+              UPDATE users SET shipping_address = COALESCE(shipping_address, '') WHERE shipping_address IS NULL;
+
         - addNotNullConstraint:
             tableName: users
             columnName: name
