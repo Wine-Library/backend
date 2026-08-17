@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.dto.wine.WineRequestDto;
 import org.example.dto.wine.WineResponseDto;
 import jakarta.persistence.EntityNotFoundException;
+import org.example.exception.FileUploadException;
 import org.example.mapper.WineMapper;
 import org.example.model.Wine;
 import org.example.repository.WineRepository;
@@ -35,7 +36,7 @@ public class WineServiceImpl implements WineService {
 
             return wineMapper.toDto(wine);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to upload image", e);
+            throw new FileUploadException("Failed to upload image");
         }
     }
 
@@ -67,7 +68,7 @@ public class WineServiceImpl implements WineService {
                 String imageUrl = importImageService.uploadFile(requestDto.getProductImage());
                 wine.setProductImage(imageUrl);
             } catch (IOException e) {
-                throw new RuntimeException("Failed to upload image", e);
+                throw new FileUploadException("Failed to upload image");
             }
         }
 
@@ -105,7 +106,7 @@ public class WineServiceImpl implements WineService {
 
             return wineMapper.toDto(wine);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to upload image", e);
+            throw new FileUploadException("Failed to upload image");
         }
     }
 

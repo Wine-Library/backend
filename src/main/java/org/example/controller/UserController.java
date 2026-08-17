@@ -10,6 +10,7 @@ import org.example.dto.wine.WineResponseDto;
 import org.example.service.user.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Users management",
@@ -44,6 +46,7 @@ public class UserController {
     @PostMapping("/favorites/{wineId}")
     @Operation(summary = "Add wine to my favorites",
             description = "Add wine to the favorites list of authorized user by its id")
+    @ResponseStatus(HttpStatus.CREATED)
     public void addWineToFavorites(@PathVariable Long wineId) {
         userService.addWineToFavorites(wineId);
     }
@@ -51,6 +54,7 @@ public class UserController {
     @DeleteMapping("/favorites/{wineId}")
     @Operation(summary = "Remove wine from my favorites",
             description = "Remove wine from the favorites list of authorized user by its id")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeWineFromFavorites(@PathVariable Long wineId) {
         userService.removeWineFromFavorites(wineId);
     }
