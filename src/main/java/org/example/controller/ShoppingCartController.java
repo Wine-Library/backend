@@ -9,6 +9,7 @@ import org.example.dto.cart_item.UpdateCartItemDto;
 import org.example.dto.shopping_cart.ShoppingCartDto;
 import org.example.dto.shopping_cart.ShoppingCartWithCountersDto;
 import org.example.service.shopping_cart.ShoppingCartService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Shopping cart management",
@@ -58,6 +60,7 @@ public class ShoppingCartController {
     @DeleteMapping("/items/{cartItemId}")
     @Operation(summary = "Remove wine from the shopping cart",
             description = "Remove wine from the shopping cart by its id")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteWineFromTheCart(@PathVariable Long cartItemId) {
         shoppingCartService.deleteWine(cartItemId);
     }

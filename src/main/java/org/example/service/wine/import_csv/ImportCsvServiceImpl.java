@@ -6,7 +6,10 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.example.exception.FileUploadException;
 import org.example.model.Wine;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,7 @@ public class ImportCsvServiceImpl implements ImportCsvService {
         ClassPathResource resource = new ClassPathResource(filename);
 
         if (!resource.exists()) {
-            throw new IllegalArgumentException("File not found in resources: " + filename);
+            throw new RuntimeException("File not found in resources: " + filename);
         }
 
         try (InputStream inputStream = resource.getInputStream();
@@ -62,8 +65,8 @@ public class ImportCsvServiceImpl implements ImportCsvService {
 
             return wines;
         } catch (Exception e) {
-            throw new RuntimeException("Error while importing file from resources: "
-                    + filename, e);
+            throw new FileUploadException("Error while importing file from resources: "
+                    + filename);
         }
     }
 }
