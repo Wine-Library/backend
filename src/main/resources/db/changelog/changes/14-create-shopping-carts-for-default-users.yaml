@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 14-create-shopping-carts-for-default-users
+      context: dev
+      author: kastashenkova
+      changes:
+        - insert:
+            tableName: shopping_carts
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(SELECT id FROM users WHERE email = 'v.velykyi@gmail.com')"
+
+        - insert:
+            tableName: shopping_carts
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(SELECT id FROM users WHERE email = 'astashenkova.katya@gmail.com')"
+
+        - insert:
+            tableName: shopping_carts
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(SELECT id FROM users WHERE email = 'v.stus@gmail.com')"
+
+        - insert:
+            tableName: shopping_carts
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(SELECT id FROM users WHERE email = 'o.teliha@icloud.com')"
+
+        - insert:
+            tableName: shopping_carts
+            columns:
+              - column:
+                  name: user_id
+                  valueComputed: "(SELECT id FROM users WHERE email = 'i.mykolaichuk@gmail.com')"

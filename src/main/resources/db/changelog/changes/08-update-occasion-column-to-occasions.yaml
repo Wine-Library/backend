@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 08-update-occasion-column-to-occasions
+      author: kastashenkova
+      changes:
+        - dropColumn:
+            tableName: wines
+            columnName: occasion
+
+        - addColumn:
+            tableName: wines
+            columns:
+              - column:
+                  name: occasions
+                  type: text[]
+                  constraints:
+                    nullable: false

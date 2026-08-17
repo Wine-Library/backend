@@ -25,6 +25,7 @@ services:
       - .env
     volumes:
       - maven-cache:/root/.m2
+      - ./uploads:/app/uploads
     ports:
       - "8091:8090"
     depends_on:
