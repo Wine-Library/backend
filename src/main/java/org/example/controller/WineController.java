@@ -68,7 +68,6 @@ public class WineController {
             summary = "Import image for the wine",
             description = "Import image for the wine by its id"
     )
-    @ResponseStatus(HttpStatus.CREATED)
     public WineResponseDto importImage(@PathVariable Long id,
                                        @RequestParam("imageFile") MultipartFile imageFile
     ) {

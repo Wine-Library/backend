@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.example.exception.EmptyFileException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +32,7 @@ public class ImportImageServiceImpl implements ImportImageService {
     @Override
     public String uploadFile(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("Cannot upload an empty file");
+            throw new EmptyFileException("Cannot upload an empty file");
         }
 
         String originalFilename = file.getOriginalFilename();

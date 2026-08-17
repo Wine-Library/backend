@@ -1,5 +1,6 @@
 package org.example.exception;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +66,26 @@ public class CustomGlobalExceptionHandler {
     public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException ex) {
         return new ResponseEntity<>("File size exceeds the maximum allowed limit (5MB)",
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<String> handleInvalidConfirmationToken(InvalidTokenException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<String> handleEntityExistsException(EntityExistsException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmptyFileException.class)
+    public ResponseEntity<String> handleEmptyFileException(EmptyFileException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<String> handleFileUploadException(FileUploadException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_GATEWAY);
     }
 
     @ExceptionHandler(Exception.class)

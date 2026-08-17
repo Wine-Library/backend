@@ -52,5 +52,4 @@ public class UserRequestDto {
     private String phoneNumber;
     @NotBlank
     private String shippingAddress;
-    private List<Long> favoriteWineIds;
 }
