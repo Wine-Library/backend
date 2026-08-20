@@ -14,7 +14,11 @@ Migrations: Liquibase
 Security: JWT
 
 ## Postman Collection
-See here: https://www.postman.com/astashenkova-katya-2138811/wine-service
+See here: https://www.postman.com/astashenkova-katya-2138811/wine-library
 
 ## Swagger API
-See here: http://localhost:8091/api/v1/swagger-ui/index.html
+See here:
+
+- https://dev.wine-library.xyz/api/v1/swagger-ui/index.html (stage)
+
+- http://localhost:8091/api/v1/swagger-ui/index.html (local)

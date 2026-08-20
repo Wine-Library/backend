@@ -1,4 +1,4 @@
-package org.example.service.wine;
+package org.example.service.wine.import_image;
 
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
@@ -8,13 +8,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.example.exception.EmptyFileException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
-public class ImportFileServiceImpl implements ImportFileService {
+public class ImportImageServiceImpl implements ImportImageService {
 
     @Value("${upload.dir:/app/uploads}")
     private String uploadDir;
@@ -31,7 +32,7 @@ public class ImportFileServiceImpl implements ImportFileService {
     @Override
     public String uploadFile(MultipartFile file) throws IOException {
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("Cannot upload an empty file");
+            throw new EmptyFileException("Cannot upload an empty file");
         }
 
         String originalFilename = file.getOriginalFilename();

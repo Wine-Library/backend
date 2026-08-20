@@ -1,4 +1,4 @@
-package org.example.repository.filter.wine.provider.price;
+package org.example.repository.filter.wine.provider.year;
 
 import org.example.model.Wine;
 import org.example.repository.filter.general.SpecificationProvider;
@@ -6,11 +6,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MaxPriceSpecificationProvider
+public class MinYearSpecificationProvider
         implements SpecificationProvider<Wine> {
 
-    private static final String KEY = "maxPrice";
-    private static final String PRICE_FIELD = "price";
+    private static final String KEY = "minYear";
+    private static final String YEAR_FIELD = "year";
 
     @Override
     public String getKey() {
@@ -20,23 +20,23 @@ public class MaxPriceSpecificationProvider
     @Override
     public Specification<Wine> getSpecification(String[] params) {
         throw new UnsupportedOperationException(
-                "MaxPriceSpecificationProvider requires a numeric parameter"
+                "MinYearSpecificationProvider requires an integer parameter"
         );
     }
 
     @Override
-    public Specification<Wine> getSpecification(double param) {
+    public Specification<Wine> getSpecification(int param) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.lessThanOrEqualTo(
-                        root.get(PRICE_FIELD),
+                criteriaBuilder.greaterThanOrEqualTo(
+                        root.get(YEAR_FIELD),
                         param
                 );
     }
 
     @Override
-    public Specification<Wine> getSpecification(int param) {
+    public Specification<Wine> getSpecification(double param) {
         throw new UnsupportedOperationException(
-                "MaxPriceSpecificationProvider requires a numeric parameter"
+                "MinYearSpecificationProvider requires an integer parameter"
         );
     }
 }

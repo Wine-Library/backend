@@ -32,4 +32,11 @@ public class MaxPopularityRatingSpecificationProvider
                         param
                 );
     }
+
+    @Override
+    public Specification<Wine> getSpecification(int param) {
+        throw new UnsupportedOperationException(
+                "MaxPopularityRatingSpecificationProvider requires a numeric parameter"
+        );
+    }
 }

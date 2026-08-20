@@ -8,4 +8,6 @@ public interface SpecificationProvider<T> {
     Specification<T> getSpecification(String[] params);
 
     Specification<T> getSpecification(double param);
+
+    Specification<T> getSpecification(int param);
 }

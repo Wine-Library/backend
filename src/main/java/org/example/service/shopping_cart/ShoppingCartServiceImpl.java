@@ -7,8 +7,6 @@ import org.example.dto.cart_item.CartItemWithCounterResponseDto;
 import org.example.dto.cart_item.UpdateCartItemDto;
 import org.example.dto.shopping_cart.ShoppingCartDto;
 import org.example.dto.shopping_cart.ShoppingCartWithCountersDto;
-import org.example.dto.cart_item.UpdateCartItemDto;
-import org.example.dto.shopping_cart.ShoppingCartDto;
 import org.example.mapper.ShoppingCartMapper;
 import org.example.model.CartItem;
 import org.example.model.ShoppingCart;
@@ -107,10 +105,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                     cartItem.getQuantity() + request.getQuantity()
             );
         } else {
-            CartItem newItem = new CartItem();
-            newItem.setWine(wine);
-            newItem.setQuantity(request.getQuantity());
-            newItem.setShoppingCart(cart);
+            CartItem newItem = new CartItem()
+                    .setWine(wine)
+                    .setQuantity(request.getQuantity())
+                    .setShoppingCart(cart);
             cart.getCartItems().add(newItem);
         }
 
@@ -132,7 +130,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         CartItem item = cartItemRepository
                 .findByIdAndShoppingCartId(cartItemId, cart.getId())
-                .orElseThrow(() -> new IllegalArgumentException(
+                .orElseThrow(() -> new EntityNotFoundException(
                         "Invalid cart item id: " + cartItemId));
 
         item.setQuantity(request.getQuantity());
@@ -155,7 +153,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Cart item not found by id: " + cartItemId));
 
+        cart.getCartItems().remove(item);
         cartItemRepository.delete(item);
+        shoppingCartRepository.save(cart);
+    }
+
+    @Override
+    public void addUser(User user) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCartRepository.save(shoppingCart);
     }
 
     private Long getCurrentUserId() throws SecurityException {

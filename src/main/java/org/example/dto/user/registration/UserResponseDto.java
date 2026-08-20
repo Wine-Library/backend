@@ -15,5 +15,4 @@ public class UserResponseDto {
     private String surname;
     private String phoneNumber;
     private String shippingAddress;
-    private List<Long> favoriteWineIds;
 }

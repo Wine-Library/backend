@@ -1,5 +1,6 @@
 package org.example.service.user;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.dto.user.registration.UserRequestDto;
 import org.example.dto.user.registration.UserResponseDto;
 import org.example.dto.wine.WineResponseDto;
+import org.example.exception.InvalidTokenException;
 import org.example.exception.RegistrationException;
 import org.example.mapper.UserMapper;
 import org.example.mapper.WineMapper;
@@ -17,6 +19,7 @@ import org.example.model.Wine;
 import org.example.repository.UserRepository;
 import org.example.repository.VerificationTokenRepository;
 import org.example.repository.WineRepository;
+import org.example.service.shopping_cart.ShoppingCartService;
 import org.example.service.user.email.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -36,33 +39,10 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository tokenRepository;
     private final EmailService emailService;
+    private final ShoppingCartService shoppingCartService;
 
     @Value("${app.frontend.url}")
     private String frontendUrl;
-
-    @Override
-    @Transactional
-    public UserResponseDto register(UserRequestDto request)
-            throws RegistrationException {
-        if (userRepository.findByEmail(request.getEmail().toLowerCase()).isPresent()) {
-            throw new RegistrationException(
-                    "User with such email already exists: "
-                            + request.getEmail());
-        }
-        User user = userMapper.toEntity(request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEnabled(false);
-        user = userRepository.save(user);
-
-        String token = UUID.randomUUID().toString();
-        createVerificationToken(user, token, VerificationToken.TokenType.EMAIL_VERIFICATION, 24);
-
-        String confirmationUrl = frontendUrl + "/auth/confirm-email?token=" + token;
-        emailService.sendEmail(user.getEmail(), "Confirm your Registration",
-                "Click the link to confirm your email: " + confirmationUrl);
-
-        return userMapper.toDto(user);
-    }
 
     @Override
     public UserResponseDto getMyInfo() {
@@ -74,27 +54,81 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public UserResponseDto register(UserRequestDto request)
+            throws RegistrationException {
+        if (userRepository.findByEmail(request.getEmail().toLowerCase()).isPresent()) {
+            throw new RegistrationException(
+                    "User with such email already exists: "
+                            + request.getEmail());
+        }
+        User user = userMapper.toEntity(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()))
+                .setEnabled(false);
+        user = userRepository.save(user);
+
+        shoppingCartService.addUser(user);
+
+        String token = UUID.randomUUID().toString();
+        createVerificationToken(user,
+                token,
+                VerificationToken.TokenType.EMAIL_VERIFICATION,
+                24);
+
+        String confirmationUrl = frontendUrl + "/auth/confirm-email?token=" + token;
+        emailService.sendEmail(user.getEmail(), "Confirm your registration",
+                "Click the link to confirm your email: " + confirmationUrl);
+
+        return userMapper.toDto(user);
+    }
+
+    @Override
+    @Transactional
     public UserResponseDto updateMyInfo(UserRequestDto request) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
-        user.setEmail(request.getEmail())
-                .setName(request.getName())
+        String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + currentEmail));
+
+        String newEmail = request.getEmail().toLowerCase();
+        boolean emailChanged = !newEmail.equalsIgnoreCase(user.getEmail());
+
+        if (emailChanged) {
+            if (userRepository.findByEmail(newEmail).isPresent()) {
+                throw new EntityExistsException("User with such email already exists: " + newEmail);
+            }
+        }
+
+        user.setName(request.getName())
                 .setSurname(request.getSurname())
                 .setPhoneNumber(request.getPhoneNumber())
                 .setShippingAddress(request.getShippingAddress())
-                .setPassword(passwordEncoder.encode(request.getPassword()));
+                .setPassword(passwordEncoder.encode(request.getPassword()))
+                .setEmail(newEmail);
+
+        if (emailChanged) {
+            user.setEnabled(false);
+            String token = UUID.randomUUID().toString();
+            createVerificationToken(user,
+                    token,
+                    VerificationToken.TokenType.EMAIL_VERIFICATION,
+                    24);
+
+            String confirmationUrl = frontendUrl + "/auth/confirm-email?token=" + token;
+            emailService.sendEmail(user.getEmail(), "Confirm your new email",
+                    "Click the link to confirm your email: " + confirmationUrl);
+        }
+
         userRepository.save(user);
+
         return userMapper.toDto(user);
     }
 
     @Transactional
     public void confirmEmail(String token) {
         VerificationToken verificationToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid token"));
+                .orElseThrow(() -> new InvalidTokenException("Invalid token"));
 
         if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Token has expired");
+            throw new InvalidTokenException("Token has expired");
         }
 
         User user = verificationToken.getUser();
@@ -107,24 +141,25 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void processForgotPassword(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User not found with email " + email));
 
         String token = UUID.randomUUID().toString();
         createVerificationToken(user, token, VerificationToken.TokenType.PASSWORD_RESET, 1);
 
         String resetUrl = frontendUrl + "/reset-password?token=" + token;
-        emailService.sendEmail(user.getEmail(), "Password Reset Request",
+        emailService.sendEmail(user.getEmail(), "Password reset request",
                 "To reset your password, click the link below:\n" + resetUrl);
     }
 
     @Transactional
     public void resetPassword(String token, String newPassword) {
         VerificationToken resetToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid token"));
+                .orElseThrow(() -> new InvalidTokenException("Invalid token"));
 
         if (resetToken.getTokenType() != VerificationToken.TokenType.PASSWORD_RESET ||
                 resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Token is invalid or expired");
+            throw new InvalidTokenException("Token is invalid or expired");
         }
 
         User user = resetToken.getUser();
@@ -143,7 +178,12 @@ public class UserServiceImpl implements UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+
         Set<Wine> favoriteWines = user.getFavoriteWines();
+        if (favoriteWines.contains(wine)) {
+            throw new EntityExistsException("Wine in list of favorites already exists: " + wineId);
+        }
+
         favoriteWines.add(wine);
         userRepository.save(user);
     }
@@ -157,7 +197,12 @@ public class UserServiceImpl implements UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+
         Set<Wine> favoriteWines = user.getFavoriteWines();
+        if (!favoriteWines.contains(wine)) {
+            throw new EntityNotFoundException("Wine in list of favorites not found: " + wineId);
+        }
+
         favoriteWines.remove(wine);
         userRepository.save(user);
     }

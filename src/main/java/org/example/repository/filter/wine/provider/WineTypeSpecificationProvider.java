@@ -27,4 +27,11 @@ public class WineTypeSpecificationProvider implements SpecificationProvider<Wine
                 "WineTypeSpecificationProvider requires a string parameter"
         );
     }
+
+    @Override
+    public Specification<Wine> getSpecification(int param) {
+        throw new UnsupportedOperationException(
+                "WineTypeSpecificationProvider requires a string parameter"
+        );
+    }
 }
