@@ -1,6 +1,5 @@
 package org.example.dto.user.registration;
 
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

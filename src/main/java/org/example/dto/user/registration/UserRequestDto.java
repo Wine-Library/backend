@@ -8,12 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.example.dto.user.registration.annotation.FieldMatch;
-import org.example.model.Wine;
 import org.hibernate.validator.constraints.Length;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
