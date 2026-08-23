@@ -1,45 +1,63 @@
 package org.example.service.wine.import_image;
 
-import jakarta.annotation.PostConstruct;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.security.MessageDigest;
 import lombok.RequiredArgsConstructor;
+import net.coobird.thumbnailator.Thumbnails;
 import org.example.exception.EmptyFileException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @RequiredArgsConstructor
 @Service
 public class ImportImageServiceImpl implements ImportImageService {
 
-    @Value("${upload.dir:/app/uploads}")
-    private String uploadDir;
+    private final S3Client s3Client;
 
-    @PostConstruct
-    public void init() {
-        try {
-            Files.createDirectories(Paths.get(uploadDir));
-        } catch (IOException e) {
-            throw new RuntimeException("Could not create upload directory", e);
-        }
-    }
+    @Value("${cloud.r2.bucket-name}")
+    private String bucketName;
 
     @Override
-    public String uploadFile(MultipartFile file) throws IOException {
+    public String uploadFile(Long wineId, MultipartFile file) throws Exception {
         if (file.isEmpty()) {
-            throw new EmptyFileException("Cannot upload an empty file");
+            throw new EmptyFileException("Cannot upload an empty file for wine " + wineId);
         }
 
-        String originalFilename = file.getOriginalFilename();
-        String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
-        Path destinationPath = Paths.get(uploadDir).resolve(uniqueFilename);
-        Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try (InputStream is = file.getInputStream()) {
+            Thumbnails.of(is)
+                    .size(800, 800)
+                    .outputFormat("webp")
+                    .toOutputStream(os);
+        }
+        byte[] webpBytes = os.toByteArray();
 
-        return "/uploads/" + uniqueFilename;
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = digest.digest(webpBytes);
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hashBytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        String sha256 = hexString.toString();
+
+        String key = String.format("wines/%d/%s.webp", wineId, sha256);
+
+        PutObjectRequest putRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .contentType("image/webp")
+                .cacheControl("public, max-age=31536000, immutable")
+                .build();
+
+        s3Client.putObject(putRequest, RequestBody.fromBytes(webpBytes));
+
+        return key;
     }
 }

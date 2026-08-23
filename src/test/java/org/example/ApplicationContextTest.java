@@ -14,7 +14,13 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "R2_ACCESS_KEY=dummy-access-key",
+        "R2_SECRET_KEY=dummy-secret-key",
+        "R2_ENDPOINT=https://dummy.r2.cloudflarestorage.com",
+        "R2_BUCKET_NAME=dummy-bucket",
+        "R2_PUBLIC_URL=https://dummy.img.com"
+})
 @Testcontainers
 class ApplicationContextTest {
 

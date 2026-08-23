@@ -1,11 +1,9 @@
 package org.example.service.wine;
 
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.wine.WineRequestDto;
 import org.example.dto.wine.WineResponseDto;
 import jakarta.persistence.EntityNotFoundException;
-import org.example.exception.FileUploadException;
 import org.example.mapper.WineMapper;
 import org.example.model.Wine;
 import org.example.repository.WineRepository;
@@ -29,14 +27,18 @@ public class WineServiceImpl implements WineService {
     @Override
     public WineResponseDto save(WineRequestDto requestDto) {
         Wine wine = wineMapper.toEntity(requestDto);
+        wine.setProductImage("pending");
+        wine = wineRepository.save(wine);
+
         try {
-            String imageUrl = importImageService.uploadFile(requestDto.getProductImage());
-            wine.setProductImage(imageUrl);
+            String objectKey = importImageService.uploadFile(wine.getId(),
+                    requestDto.getProductImage());
+            wine.setProductImage(objectKey);
             wine = wineRepository.save(wine);
 
             return wineMapper.toDto(wine);
-        } catch (IOException e) {
-            throw new FileUploadException("Failed to upload image");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload image", e);
         }
     }
 
@@ -63,12 +65,14 @@ public class WineServiceImpl implements WineService {
                         "Cannot update wine by id: " + id
                 ));
 
+
         if (requestDto.getProductImage() != null && !requestDto.getProductImage().isEmpty()) {
             try {
-                String imageUrl = importImageService.uploadFile(requestDto.getProductImage());
-                wine.setProductImage(imageUrl);
-            } catch (IOException e) {
-                throw new FileUploadException("Failed to upload image");
+                String objectKey = importImageService.uploadFile(wine.getId(),
+                        requestDto.getProductImage());
+                wine.setProductImage(objectKey);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to upload image", e);
             }
         }
 
@@ -99,14 +103,15 @@ public class WineServiceImpl implements WineService {
                 .orElseThrow(() -> new EntityNotFoundException(
                 "Cannot find wine by id: " + wineId
         ));
+
         try {
-            String imageUrl = importImageService.uploadFile(file);
-            wine.setProductImage(imageUrl);
+            String objectKey = importImageService.uploadFile(wine.getId(), file);
+            wine.setProductImage(objectKey);
             wine = wineRepository.save(wine);
 
             return wineMapper.toDto(wine);
-        } catch (IOException e) {
-            throw new FileUploadException("Failed to upload image");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload image", e);
         }
     }
 
