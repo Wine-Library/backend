@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 19-reset-wines-identity
+      author: kastashenkova
+      changes:
+        - sql:
+            sql: "TRUNCATE TABLE cart_items, favorites, wines RESTART IDENTITY CASCADE;"
