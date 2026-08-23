@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @RequiredArgsConstructor
@@ -59,5 +60,24 @@ public class ImportImageServiceImpl implements ImportImageService {
         s3Client.putObject(putRequest, RequestBody.fromBytes(webpBytes));
 
         return key;
+    }
+
+    @Override
+    public void deleteFile(String objectKey) {
+        if (objectKey == null || objectKey.trim().isEmpty() || objectKey.equals("pending")) {
+            return;
+        }
+
+        try {
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(objectKey)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+        } catch (Exception e) {
+            System.err.println("Failed to delete file from R2 "
+                    + objectKey + ". Reason: " + e.getMessage());
+        }
     }
 }
