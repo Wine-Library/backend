@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 18-clear-wines-table
+      author: kastashenkova
+      changes:
+        - delete:
+            tableName: cart_items
+
+        - delete:
+            tableName: favorites
+
+        - delete:
+            tableName: wines

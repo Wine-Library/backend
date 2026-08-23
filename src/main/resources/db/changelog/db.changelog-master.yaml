@@ -33,3 +33,5 @@ databaseChangeLog:
       file: db/changelog/changes/16-add-year-column-for-wines.yaml
   - include:
       file: db/changelog/changes/17-remove-uniqueness-of-wine-names.yaml
+  - include:
+      file: db/changelog/changes/18-clear-wines-table.yaml
