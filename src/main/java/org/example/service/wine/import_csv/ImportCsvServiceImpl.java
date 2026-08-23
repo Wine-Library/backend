@@ -1,6 +1,7 @@
 package org.example.service.wine.import_csv;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,7 +27,6 @@ public class ImportCsvServiceImpl implements ImportCsvService {
     @Override
     public List<Wine> importFile(String filename) {
         List<Wine> wines = new ArrayList<>();
-
         ClassPathResource resource = new ClassPathResource(filename);
 
         if (!resource.exists()) {
@@ -49,11 +49,12 @@ public class ImportCsvServiceImpl implements ImportCsvService {
                     continue;
                 }
 
-                String[] data = line.split(";", -1);
+                String[] data = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 
                 Wine wine = new Wine();
+
+                String imageUrl = (data.length > 0 && !data[0].trim().isEmpty()) ? data[0].replace("\"", "").trim() : "pending";
                 String wineName = data[1].replace("\"", "").trim();
-                String imageUrl = !data[0].trim().isEmpty() ? data[0] : "pending";
 
                 String imageFileName = wineName.replace(" ", "_").replace("'", "") + ".jpg";
                 ClassPathResource imageResource = new ClassPathResource("dataset_images/" + imageFileName);
@@ -81,8 +82,7 @@ public class ImportCsvServiceImpl implements ImportCsvService {
 
             return wines;
         } catch (Exception e) {
-            throw new FileUploadException("Error while importing file from resources: "
-                    + filename);
+            throw new FileUploadException("Error while importing file from resources: " + filename);
         }
     }
 
@@ -120,10 +120,8 @@ public class ImportCsvServiceImpl implements ImportCsvService {
             }
 
             @Override
-            public void transferTo(java.io.File dest) throws IOException, IllegalStateException {
-                java.nio.file.Files.copy(resource.getInputStream(),
-                        dest.toPath(),
-                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            public void transferTo(File dest) throws UnsupportedOperationException {
+                throw new UnsupportedOperationException("Not supported for ClassPathResource mapping");
             }
         };
     }
