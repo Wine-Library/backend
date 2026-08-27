@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class ImportCsvServiceImpl implements ImportCsvService {
         }
 
         try (InputStream inputStream = resource.getInputStream();
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
             String line;
             boolean isFirstLine = true;
@@ -54,9 +55,10 @@ public class ImportCsvServiceImpl implements ImportCsvService {
                 Wine wine = new Wine();
 
                 String imageUrl = (data.length > 0 && !data[0].trim().isEmpty()) ? data[0].replace("\"", "").trim() : "pending";
-                String wineName = data[1].replace("\"", "").trim();
+                String wineName = data[1].replace("\"", "").trim().replaceAll("\\s+", " ");
+                String yearStr = data[7].replace("\"", "").trim();
 
-                String imageFileName = wineName.replace(" ", "_").replace("'", "") + ".jpg";
+                String imageFileName = wineName.replace(" ", "_").replace("'", "_") + "_" + yearStr + ".jpg";
                 ClassPathResource imageResource = new ClassPathResource("dataset_images/" + imageFileName);
 
                 wine.setWineName(wineName)
@@ -65,10 +67,11 @@ public class ImportCsvServiceImpl implements ImportCsvService {
                         .setWineType(data[4].replace("\"", "").trim())
                         .setPopularityRating(new BigDecimal(data[5].replace("\"", "").replace(",", ".").trim()))
                         .setOccasions(List.of(data[6].replace("\"", "").trim()))
-                        .setYear(Integer.parseInt(data[7].replace("\"", "").trim()))
+                        .setYear(Integer.parseInt(yearStr))
                         .setProductImage(imageUrl);
 
                 wine = wineRepository.save(wine);
+
 
                 if (imageResource.exists()) {
                     MultipartFile multipartFile = createMultipartFile(imageResource, imageFileName);
