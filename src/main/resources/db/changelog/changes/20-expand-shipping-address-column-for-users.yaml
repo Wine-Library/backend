@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20-expand-shipping-address-column-for-users
+      author: kastashenkova
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: street
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: city
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: zip_code
+                  type: varchar(50)
+                  constraints:
+                    nullable: true
+
+        - dropColumn:
+            tableName: users
+            columnName: shipping_address

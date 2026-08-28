@@ -3,6 +3,7 @@ package org.example.service.user;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -100,7 +101,9 @@ public class UserServiceImpl implements UserService {
         user.setName(request.getName())
                 .setSurname(request.getSurname())
                 .setPhoneNumber(request.getPhoneNumber())
-                .setShippingAddress(request.getShippingAddress())
+                .setStreet(request.getStreet())
+                .setCity(request.getCity())
+                .setZipCode(request.getZipCode())
                 .setPassword(passwordEncoder.encode(request.getPassword()))
                 .setEmail(newEmail);
 
@@ -216,6 +219,34 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findFavoriteWines(user.getId(), pageable)
                 .map(wineMapper::toDto);
+    }
+
+    @Override
+    @Transactional
+    public void resendEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("User not found: " + email));
+
+        if (user.isEnabled()) {
+            throw new IllegalStateException(
+                    "User email is already verified for user " + email);
+        }
+
+        List<VerificationToken> oldTokens = tokenRepository.findByUserAndTokenType(
+                user, VerificationToken.TokenType.EMAIL_VERIFICATION);
+        if (!oldTokens.isEmpty()) {
+            tokenRepository.deleteAll(oldTokens);
+        }
+
+        String token = UUID.randomUUID().toString();
+        createVerificationToken(user,
+                token,
+                VerificationToken.TokenType.EMAIL_VERIFICATION,
+                24);
+
+        String confirmationUrl = frontendUrl + "/auth/confirm-email?token=" + token;
+        emailService.sendEmail(user.getEmail(), "Confirm your registration",
+                "Click the link to confirm your email: " + confirmationUrl);
     }
 
     private void createVerificationToken(User user, String token,

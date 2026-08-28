@@ -46,5 +46,9 @@ public class UserRequestDto {
     )
     private String phoneNumber;
     @NotBlank
-    private String shippingAddress;
+    private String street;
+    @NotBlank
+    private String city;
+    @NotBlank
+    private String zipCode;
 }
