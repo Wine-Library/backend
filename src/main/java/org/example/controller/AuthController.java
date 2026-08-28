@@ -54,6 +54,13 @@ public class AuthController {
         userService.confirmEmail(token);
     }
 
+    @GetMapping("/resend-verification")
+    @Operation(summary = "Resend verification link",
+            description = "Resend email verification link by user's email")
+    public void resendEmail(String email) {
+        userService.resendEmail(email);
+    }
+
     @PostMapping("/forgot-password")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Forgot password",

@@ -1,0 +1,97 @@
+databaseChangeLog:
+  - changeSet:
+      id: 21-fill-address-column-for-default-users
+      author: kastashenkova
+      changes:
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: street
+                  value: Mikhnovskoho 1
+              - column:
+                  name: city
+                  value: Kyiv
+              - column:
+                  name: zip_code
+                  value: "04071"
+            where: "email = 'v.velykyi@gmail.com'"
+
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: street
+                  value: Rural 10
+              - column:
+                  name: city
+                  value: Kharkiv
+              - column:
+                  name: zip_code
+                  value: "04079"
+            where: "email = 'astashenkova.katya@gmail.com'"
+
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: street
+                  value: Mikhnovskoho 33
+              - column:
+                  name: city
+                  value: Kryvyi Rih
+              - column:
+                  name: zip_code
+                  value: "05571"
+            where: "email = 'v.stus@gmail.com'"
+
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: street
+                  value: Industrial 33
+              - column:
+                  name: city
+                  value: Kryvyi Rih
+              - column:
+                  name: zip_code
+                  value: "05555"
+            where: "email = 'o.teliha@icloud.com'"
+
+        - update:
+            tableName: users
+            columns:
+              - column:
+                  name: street
+                  value: Cottage 90
+              - column:
+                  name: city
+                  value: Lviv
+              - column:
+                  name: zip_code
+                  value: "07771"
+            where: "email = 'i.mykolaichuk@gmail.com'"
+
+        - update:
+            tableName: users
+            columns:
+              - column: { name: street, value: "Not specified" }
+              - column: { name: city, value: "Not specified" }
+              - column: { name: zip_code, value: "00000" }
+            where: "street IS NULL OR city IS NULL OR zip_code IS NULL"
+
+        - addNotNullConstraint:
+            tableName: users
+            columnName: street
+            columnDataType: varchar(255)
+
+        - addNotNullConstraint:
+            tableName: users
+            columnName: city
+            columnDataType: varchar(255)
+
+        - addNotNullConstraint:
+            tableName: users
+            columnName: zip_code
+            columnDataType: varchar(50)

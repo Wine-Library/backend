@@ -21,7 +21,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
         "R2_SECRET_KEY=dummy-secret-key",
         "R2_ENDPOINT=https://dummy.r2.cloudflarestorage.com",
         "R2_BUCKET_NAME=dummy-bucket",
-        "R2_PUBLIC_URL=https://dummy.img.com"
+        "R2_PUBLIC_URL=https://dummy.img.com",
+        "STRIPE_SECRET_KEY=sk_test_dummy_key"
 })
 @Testcontainers
 class ApplicationContextTest {

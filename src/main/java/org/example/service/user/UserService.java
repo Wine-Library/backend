@@ -24,4 +24,6 @@ public interface UserService {
     void removeWineFromFavorites(Long wineId);
 
     Page<WineResponseDto> getFavorites(Pageable pageable);
+
+    void resendEmail(String email);
 }

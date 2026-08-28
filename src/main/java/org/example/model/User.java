@@ -45,7 +45,11 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String phoneNumber;
     @Column(nullable = false)
-    private String shippingAddress;
+    private String street;
+    @Column(nullable = false)
+    private String city;
+    @Column(nullable = false)
+    private String zipCode;
 
     @ManyToMany
     @JoinTable(

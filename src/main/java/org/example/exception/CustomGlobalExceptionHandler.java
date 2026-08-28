@@ -83,6 +83,11 @@ public class CustomGlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(OrderProcessingException.class)
+    public ResponseEntity<String> handleOrderProcessingException(OrderProcessingException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(FileUploadException.class)
     public ResponseEntity<String> handleFileUploadException(FileUploadException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_GATEWAY);

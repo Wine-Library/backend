@@ -37,3 +37,11 @@ databaseChangeLog:
       file: db/changelog/changes/18-clear-wines-table.yaml
   - include:
       file: db/changelog/changes/19-reset-wines-identity.yaml
+  - include:
+      file: db/changelog/changes/20-expand-shipping-address-column-for-users.yaml
+  - include:
+      file: db/changelog/changes/21-fill-address-column-for-default-users.yaml
+  - include:
+      file: db/changelog/changes/22-create-orders-table.yaml
+  - include:
+      file: db/changelog/changes/23-create-order-items-table.yaml
