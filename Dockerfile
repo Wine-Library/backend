@@ -11,7 +11,7 @@ RUN --mount=type=cache,target=/root/.m2 \
 FROM base AS dev
 WORKDIR /app
 COPY src ./src
-EXPOSE 8090
+EXPOSE 8090 9090
 CMD ["mvn", "spring-boot:run"]
 
 FROM base AS builder
@@ -20,8 +20,9 @@ RUN --mount=type=cache,target=/root/.m2 \
     mvn -B package -DskipTests
 
 FROM eclipse-temurin:21-jre AS prod
+LABEL org.opencontainers.image.source=https://github.com/Wine-Library/backend
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"
-EXPOSE 8090
+EXPOSE 8090 9090
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

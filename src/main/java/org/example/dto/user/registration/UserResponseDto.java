@@ -10,5 +10,10 @@ import lombok.experimental.Accessors;
 public class UserResponseDto {
     private Long id;
     private String email;
-    private int age;
+    private String name;
+    private String surname;
+    private String phoneNumber;
+    private String street;
+    private String city;
+    private String zipCode;
 }

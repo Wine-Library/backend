@@ -1,7 +1,8 @@
 package org.example.dto.user.login;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -11,9 +12,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class UserLoginRequestDto {
     @NotBlank
-    @Size(min = 3, max = 35, message = "{validation.email.size}")
+    @Email(message = "{validation.email.invalid}")
     private String email;
     @NotBlank
-    @Size(min = 8, max = 35, message = "{validation.password.size}")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[a-z]).{8,35}$",
+            message = "{validation.password.format}"
+    )
     private String password;
 }

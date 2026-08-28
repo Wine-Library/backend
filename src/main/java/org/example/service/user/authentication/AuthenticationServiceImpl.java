@@ -1,8 +1,9 @@
-package org.example.security;
+package org.example.service.user.authentication;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dto.user.login.UserLoginRequestDto;
 import org.example.dto.user.login.UserLoginResponseDto;
+import org.example.security.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
 

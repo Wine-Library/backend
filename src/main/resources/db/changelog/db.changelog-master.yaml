@@ -3,3 +3,45 @@ databaseChangeLog:
       file: db/changelog/changes/01-create-users-table.yaml
   - include:
       file: db/changelog/changes/02-fill-users-table-with-default-users.yaml
+  - include:
+      file: db/changelog/changes/03-replace-age-with-older-than-eighteen.yaml
+  - include:
+      file: db/changelog/changes/04-create-wines-table.yaml
+  - include:
+      file: db/changelog/changes/05-create-verification-tokens-table.yaml
+  - include:
+      file: db/changelog/changes/06-add-enabled-column-for-users.yaml
+  - include:
+      file: db/changelog/changes/07-update-passwords-to-match-pattern.yaml
+  - include:
+      file: db/changelog/changes/08-update-occasion-column-to-occasions.yaml
+  - include:
+      file: db/changelog/changes/09-add-name-surname-phone-address-columns-for-users.yaml
+  - include:
+      file: db/changelog/changes/10-fill-name-surname-phone-address-columns-for-default-users.yaml
+  - include:
+      file: db/changelog/changes/11-create-favorites-table.yaml
+  - include:
+      file: db/changelog/changes/12-create-shopping-carts-table.yaml
+  - include:
+      file: db/changelog/changes/13-create-cart-items-table.yaml
+  - include:
+      file: db/changelog/changes/14-create-shopping-carts-for-default-users.yaml
+  - include:
+      file: db/changelog/changes/15-change-price-and-popularity-rating-fields-type-in-wines.yaml
+  - include:
+      file: db/changelog/changes/16-add-year-column-for-wines.yaml
+  - include:
+      file: db/changelog/changes/17-remove-uniqueness-of-wine-names.yaml
+  - include:
+      file: db/changelog/changes/18-clear-wines-table.yaml
+  - include:
+      file: db/changelog/changes/19-reset-wines-identity.yaml
+  - include:
+      file: db/changelog/changes/20-expand-shipping-address-column-for-users.yaml
+  - include:
+      file: db/changelog/changes/21-fill-address-column-for-default-users.yaml
+  - include:
+      file: db/changelog/changes/22-create-orders-table.yaml
+  - include:
+      file: db/changelog/changes/23-create-order-items-table.yaml
