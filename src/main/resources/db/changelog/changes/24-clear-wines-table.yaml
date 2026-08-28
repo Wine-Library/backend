@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 18-clear-wines-table
+      author: kastashenkova
+      changes:
+        - delete:
+            tableName: cart_items
+
+        - delete:
+            tableName: favorites
+
+        - delete:
+            tableName: wines
+
+        - sql:
+            sql: "TRUNCATE TABLE order_items, cart_items, favorites, wines RESTART IDENTITY CASCADE;"
