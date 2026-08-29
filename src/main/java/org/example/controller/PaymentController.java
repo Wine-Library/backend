@@ -2,15 +2,13 @@ package org.example.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.dto.order.PaymentSessionResponseDto;
+import org.example.dto.payment.PaymentIntentRequestDto;
+import org.example.dto.payment.PaymentIntentResponseDto;
+import org.example.dto.payment.PaymentSessionResponseDto;
 import org.example.service.payment.PaymentService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Payment management",
         description = "Endpoints for processing order payments")
@@ -33,5 +31,13 @@ public class PaymentController {
             description = "Callback endpoint triggered after successful checkout")
     public void confirmPayment(@RequestParam("order_id") Long orderId) {
         paymentService.handlePaymentSuccess(orderId);
+    }
+
+    @PostMapping("/create-payment-intent")
+    @Operation(summary = "Create payment intent",
+            description = "Generate a Stripe client secret for custom frontend payment flow")
+    public PaymentIntentResponseDto createPaymentIntent(@RequestBody @Valid
+                                                            PaymentIntentRequestDto request) {
+        return paymentService.createPaymentIntent(request);
     }
 }
