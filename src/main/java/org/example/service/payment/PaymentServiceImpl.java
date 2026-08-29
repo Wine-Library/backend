@@ -2,13 +2,18 @@ package org.example.service.payment;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
-import org.example.dto.order.PaymentSessionResponseDto;
+import org.example.dto.payment.PaymentIntentRequestDto;
+import org.example.dto.payment.PaymentIntentResponseDto;
+import org.example.dto.payment.PaymentSessionResponseDto;
+import org.example.exception.PaymentProcessingException;
 import org.example.model.Order;
 import org.example.model.OrderItem;
 import org.example.repository.OrderRepository;
@@ -37,12 +42,16 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public PaymentSessionResponseDto createPaymentSession(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + orderId));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Order not found with id: " + orderId));
 
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl(frontendUrl + "/payments/success?session_id={CHECKOUT_SESSION_ID}&order_id=" + order.getId())
-                .setCancelUrl(frontendUrl + "/payments/cancel?order_id=" + order.getId());
+                .setSuccessUrl(frontendUrl
+                        + "/payments/success?session_id={CHECKOUT_SESSION_ID}&order_id="
+                        + order.getId())
+                .setCancelUrl(frontendUrl
+                        + "/payments/cancel?order_id=" + order.getId());
 
         for (OrderItem item : order.getOrderItems()) {
             long unitAmountInCents = item.getPrice()
@@ -56,7 +65,11 @@ public class PaymentServiceImpl implements PaymentService {
                                     .setCurrency("usd")
                                     .setUnitAmount(unitAmountInCents)
                                     .setProductData(
-                                            SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                            SessionCreateParams
+                                                    .LineItem
+                                                    .PriceData
+                                                    .ProductData
+                                                    .builder()
                                                     .setName(item.getWine().getWineName())
                                                     .build()
                                     )
@@ -83,5 +96,27 @@ public class PaymentServiceImpl implements PaymentService {
 
         order.setStatus(Order.Status.COMPLETED);
         orderRepository.save(order);
+    }
+
+    @Override
+    public PaymentIntentResponseDto createPaymentIntent(PaymentIntentRequestDto request) {
+        long amountInCents = request.amount().multiply(BigDecimal.valueOf(100)).longValue();
+
+        String currency = (request.currency() != null && !request.currency().isBlank())
+                ? request.currency().toLowerCase()
+                : "usd";
+
+        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
+                .setAmount(amountInCents)
+                .setCurrency(currency)
+                .build();
+
+        try {
+            PaymentIntent paymentIntent = PaymentIntent.create(params);
+            return new PaymentIntentResponseDto(paymentIntent.getClientSecret());
+        } catch (StripeException e) {
+            throw new PaymentProcessingException("Failed to create Stripe PaymentIntent for "
+                    + request);
+        }
     }
 }
