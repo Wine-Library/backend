@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.dto.user.login.RefreshTokenRequestDto;
 import org.example.dto.user.login.UserLoginRequestDto;
 import org.example.dto.user.login.UserLoginResponseDto;
 import org.example.dto.user.password.ForgotPasswordRequestDto;
@@ -57,7 +58,7 @@ public class AuthController {
     @GetMapping("/resend-verification")
     @Operation(summary = "Resend verification link",
             description = "Resend email verification link by user's email")
-    public void resendEmail(String email) {
+    public void resendEmail(@RequestParam("email") String email) {
         userService.resendEmail(email);
     }
 
@@ -75,5 +76,12 @@ public class AuthController {
             description = "Sets a new password using a recovery token")
     public void resetPassword(@RequestBody @Valid ResetPasswordRequestDto request) {
         userService.resetPassword(request.getToken(), request.getNewPassword());
+    }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "Refresh access token",
+            description = "Get a new access token using a valid refresh token")
+    public UserLoginResponseDto refreshToken(@RequestBody @Valid RefreshTokenRequestDto request) {
+        return authenticationService.refreshToken(request);
     }
 }
