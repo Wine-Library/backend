@@ -229,8 +229,10 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findFavoriteWines(user.getId(), pageable)
                 .map(wineMapper::toDto)
-                .map(w -> w.setProductImage(wineImagePublicUrl
-                        + "/" + w.getProductImage()));
+                .map(w -> {
+                    w.setProductImage(wineImagePublicUrl + "/" + w.getProductImage());
+                    return w;
+                });
     }
 
     @Override
