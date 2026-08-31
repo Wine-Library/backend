@@ -45,6 +45,9 @@ public class UserServiceImpl implements UserService {
     @Value("${app.frontend.url}")
     private String frontendUrl;
 
+    @Value("${cloud.r2.public-url}")
+    private String wineImagePublicUrl;
+
     @Override
     public UserResponseDto getMyInfo() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -225,7 +228,9 @@ public class UserServiceImpl implements UserService {
 
         return userRepository
                 .findFavoriteWines(user.getId(), pageable)
-                .map(wineMapper::toDto);
+                .map(wineMapper::toDto)
+                .map(w -> w.setProductImage(wineImagePublicUrl
+                        + "/" + w.getProductImage()));
     }
 
     @Override
