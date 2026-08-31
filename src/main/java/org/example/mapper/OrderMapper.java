@@ -8,9 +8,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(config = MapperConfig.class, uses = CartItemMapper.class)
+@Mapper(config = MapperConfig.class, uses = OrderItemMapper.class)
 public interface OrderMapper {
     @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "orderItems", source = "orderItems")
     OrderResponseDto toDto(Order order);
 
     void updateFromDto(UpdateOrderDto request, @MappingTarget Order order);
