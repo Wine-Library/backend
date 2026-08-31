@@ -47,5 +47,3 @@ databaseChangeLog:
       file: db/changelog/changes/23-create-order-items-table.yaml
   - include:
       file: db/changelog/changes/24-clear-wines-table.yaml
-  - include:
-      file: db/changelog/changes/25-create-shopping-carts-for-default-users.yaml
