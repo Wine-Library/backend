@@ -57,13 +57,17 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserResponseDto register(UserRequestDto request)
             throws RegistrationException {
-        if (userRepository.findByEmail(request.getEmail().toLowerCase()).isPresent()) {
+        String email = request.getEmail().toLowerCase();
+        if (userRepository
+                .findByEmail(email)
+                .isPresent()) {
             throw new RegistrationException(
                     "User with such email already exists: "
                             + request.getEmail());
         }
         User user = userMapper.toEntity(request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()))
+        user.setEmail(email)
+                .setPassword(passwordEncoder.encode(request.getPassword()))
                 .setEnabled(false);
         user = userRepository.save(user);
 
@@ -87,14 +91,16 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto updateMyInfo(UserRequestDto request) {
         String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(currentEmail)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + currentEmail));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User not found: " + currentEmail));
 
         String newEmail = request.getEmail().toLowerCase();
         boolean emailChanged = !newEmail.equalsIgnoreCase(user.getEmail());
 
         if (emailChanged) {
             if (userRepository.findByEmail(newEmail).isPresent()) {
-                throw new EntityExistsException("User with such email already exists: " + newEmail);
+                throw new EntityExistsException(
+                        "User with such email already exists: " + newEmail);
             }
         }
 
@@ -143,7 +149,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void processForgotPassword(String email) {
-        User user = userRepository.findByEmail(email)
+        String lowerCaseEmail = email.toLowerCase();
+        User user = userRepository.findByEmail(lowerCaseEmail)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "User not found with email " + email));
 
@@ -224,7 +231,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void resendEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(
+        String lowerCaseEmail = email.toLowerCase();
+        User user = userRepository.findByEmail(lowerCaseEmail).orElseThrow(
                 () -> new EntityNotFoundException("User not found: " + email));
 
         if (user.isEnabled()) {
@@ -252,11 +260,12 @@ public class UserServiceImpl implements UserService {
     private void createVerificationToken(User user, String token,
                                          VerificationToken.TokenType type,
                                          int hoursValid) {
-        VerificationToken verificationToken = new VerificationToken();
-        verificationToken.setToken(token);
-        verificationToken.setUser(user);
-        verificationToken.setTokenType(type);
-        verificationToken.setExpiryDate(LocalDateTime.now().plusHours(hoursValid));
+        VerificationToken verificationToken = new VerificationToken()
+                .setToken(token)
+                .setUser(user)
+                .setTokenType(type)
+                .setExpiryDate(LocalDateTime.now()
+                        .plusHours(hoursValid));
         tokenRepository.save(verificationToken);
     }
 }
