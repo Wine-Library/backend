@@ -33,7 +33,7 @@ databaseChangeLog:
                   type: timestamp
                   constraints:
                     nullable: false
-              - column: # Змінено на адресу, яка потрібна для Java-коду
+              - column:
                   name: street
                   type: varchar(255)
                   constraints:

@@ -6,9 +6,9 @@ import org.example.model.OrderItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(config = MapperConfig.class, uses = CartItemMapper.class)
+@Mapper(config = MapperConfig.class, uses = WineMapper.class)
 public interface OrderItemMapper {
 
-    @Mapping(target = "wineId", source = "wine.id")
+    @Mapping(source = "wine.id", target = "wineId")
     OrderItemResponseDto toDto(OrderItem orderItem);
 }
